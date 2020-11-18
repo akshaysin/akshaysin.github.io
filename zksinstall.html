@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="english" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Installing Standalone Zookeeper on RHEL and set it up as a service - An Average Joe</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="https://akshaysin.github.io/zksinstall.html">
+
+        <meta name="author" content="Akshay Sinha" />
+        <meta name="keywords" content="zookeeper,installation" />
+        <meta name="description" content="This goes through installation and setup of zookeeper" />
+
+        <meta property="og:site_name" content="An Average Joe" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Installing Standalone Zookeeper on RHEL and set it up as a service"/>
+        <meta property="og:url" content="https://akshaysin.github.io/zksinstall.html"/>
+        <meta property="og:description" content="This goes through installation and setup of zookeeper"/>
+        <meta property="article:published_time" content="2018-03-18" />
+            <meta property="article:section" content="Devops" />
+            <meta property="article:tag" content="zookeeper" />
+            <meta property="article:tag" content="installation" />
+            <meta property="article:author" content="Akshay Sinha" />
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://akshaysin.github.io/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="https://akshaysin.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="https://akshaysin.github.io/theme/css/pygments/solarizeddark.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://akshaysin.github.io/theme/css/style.css" type="text/css"/>
+
+
+
+
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-2905595188512795",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="https://akshaysin.github.io/" class="navbar-brand">
+An Average Joe            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li >
+                            <a href="https://akshaysin.github.io/category/data-analytics.html">Data analytics</a>
+                        </li>
+                        <li class="active">
+                            <a href="https://akshaysin.github.io/category/devops.html">Devops</a>
+                        </li>
+                        <li >
+                            <a href="https://akshaysin.github.io/category/linux-hacks.html">Linux hacks</a>
+                        </li>
+                        <li >
+                            <a href="https://akshaysin.github.io/category/python.html">Python</a>
+                        </li>
+                        <li >
+                            <a href="https://akshaysin.github.io/category/various.html">Various</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<!-- Banner -->
+<!-- End Banner -->
+
+<!-- Content Container -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="https://akshaysin.github.io/zksinstall.html"
+                       rel="bookmark"
+                       title="Permalink to Installing Standalone Zookeeper on RHEL and set it up as a service">
+                        Installing Standalone Zookeeper on RHEL and set it up as a service
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2018-03-18T09:30:00-05:00"> Sun 18 March 2018</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="https://akshaysin.github.io/tag/zookeeper.html">zookeeper</a>
+        /
+	<a href="https://akshaysin.github.io/tag/installation.html">installation</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <h2>Installation</h2>
+<p>First Lets make sure java is installed</p>
+<pre><code>yum install java-1.8.0-openjdk-src.x86_64
+</code></pre>
+<p>Download the latest version of zookeeper and pick the latest avaiable.</p>
+<pre><code>cd /tmp &amp;&amp; mkdir zookeeper &amp;&amp; cd zookeeper/ &amp;&amp; wget http://apache.org/dist/zookeeper/current/zookeeper-3.4.10.tar.gz
+</code></pre>
+<p>Add zookeeper user</p>
+<pre><code>useradd zookeeper &amp; passwd zookeeper
+</code></pre>
+<p>Unzip zookeeper binaries </p>
+<pre><code>cd /opt &amp;&amp; tar xvzf /tmp/zookeeper/zookeeper-3.4.10.tar.gz
+</code></pre>
+<p>Create the softlink <code>/opt/zookeeper</code></p>
+<pre><code>ln -s /opt/zookeeper-3.4.10 /opt/zookeeper
+</code></pre>
+<p>Create <code>/var/lib/zookeeper</code> to store the <code>idfile</code> and <code>data</code></p>
+<pre><code>mkdir /var/lib/zookeeper
+</code></pre>
+<p>Rename <code>zoo_sample.cfg</code> to <code>zoo.cfg</code></p>
+<pre><code>cd /opt/zookeeper/conf &amp;&amp; cp zoo_sample.cfg zoo.cfg
+</code></pre>
+<p>Update the zoo.cfg to update the new datadir</p>
+<pre><code>dataDir=/var/lib/zookeeper
+</code></pre>
+<p>Add following line to <code>/opt/zookeeper/bin/zkServer.sh</code>: <code>ZOO_LOG_DIR=/opt/zookeeper</code> before line <code># use POSTIX interface, symlink is followed automatically</code></p>
+<p>Change owernership and permissions on all zookeeper relared dirs</p>
+<pre><code>chown -R zookeeper:zookeeper /opt/zookeeper-3.4.10 &amp;&amp; chown -R zookeeper:zookeeper /opt/zookeeper &amp;&amp; chown -R zookeeper:zookeeper /var/lib/zookeeper
+</code></pre>
+<p>Add <code>zookeper</code> user to sudoers as NOPASSWD : </p>
+<pre><code>zookeeper ALL=(ALL) NOPASSWD: ALL
+</code></pre>
+<p>FInally start stop the service from <code>/opt/zookeeper/</code> dir as </p>
+<pre><code>bin/zkServer.sh start
+</code></pre>
+<p>At this time we are done with the installation and this next section talks about how to set it up as a service</p>
+<h2>Setting it as a Service</h2>
+<p>Create following file in /etc/init.d folder by the name zookeeper</p>
+<pre><code>#!/bin/bash
+
+# /etc/init.d/zookeeper
+
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#
+# ZooKeeper
+#
+# chkconfig: 2345 89 9
+# description: zookeeper
+
+# ZooKeeper install path (where you extracted the tarball)
+ZOOKEEPER='/opt/zookeeper'
+
+source /etc/rc.d/init.d/functions
+source $ZOOKEEPER/bin/zkEnv.sh
+
+RETVAL=0
+PIDFILE="/var/lib/zookeeper/data/zookeeper_server.pid"
+desc="ZooKeeper daemon"
+
+start() {
+  echo -n $"Starting $desc (zookeeper): "
+  daemon --user zookeeper $ZOOKEEPER/bin/zkServer.sh start
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] &amp;&amp; touch /var/lock/subsys/zookeeper
+  return $RETVAL
+}
+
+stop() {
+  echo -n $"Stopping $desc (zookeeper): "
+  daemon --user zookeeper $ZOOKEEPER/bin/zkServer.sh stop
+  RETVAL=$?
+  sleep 5
+  echo
+  [ $RETVAL -eq 0 ] &amp;&amp; rm -f /var/lock/subsys/zookeeper $PIDFILE
+}
+
+restart() {
+  stop
+  start
+}
+
+get_pid() {
+  cat "$PIDFILE"
+}
+
+checkstatus(){
+  status -p $PIDFILE ${JAVA_HOME}/bin/java
+  RETVAL=$?
+}
+
+condrestart(){
+  [ -e /var/lock/subsys/zookeeper ] &amp;&amp; restart || :
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    checkstatus
+    ;;
+  restart)
+    restart
+    ;;
+  condrestart)
+    condrestart
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|restart|condrestart}"
+    exit 1
+esac
+
+exit $RETVAL
+</code></pre>
+<p>Change permissions on the init file</p>
+<pre><code>Chmod 755 /etc/init.d/zookeeper
+</code></pre>
+<p>Start/stop/restart zookeeper by using following commands </p>
+<pre><code>sudo service zookeeper start
+sudo service zookeeper stop
+sudo service zookeeper restart
+sudo service zookeeper status
+</code></pre>
+<p>Finally add it to boot menu <code>sudo chkconfig zookeeper on</code></p>
+            </div>
+            <!-- /.entry-content -->
+    <hr />
+    <!-- AddThis Button BEGIN -->
+    <div class="addthis_toolbox addthis_default_style">
+            <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+            <a class="addthis_button_tweet"></a>
+            <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    </div>
+    <!-- AddThis Button END -->
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'an-average-joe'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'zksinstall';
+                var disqus_url = 'https://akshaysin.github.io/zksinstall.html';
+
+            var disqus_config = function () {
+                this.language = "english";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<div id="aboutme">
+        <p>
+            <img width="100%" class="img-thumbnail" src="https://akshaysin.github.io/images/akshay.jpg"/>
+        </p>
+    <p>
+      <strong>About Akshay Sinha</strong><br/>
+        A confused coder.
+    </p>
+</div><!-- Sidebar -->
+<section class="well well-sm">
+  <ul class="list-group list-group-flush">
+
+<!-- Sidebar/Social -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+  <ul class="list-group" id="social">
+    <li class="list-group-item"><a href="https://www.linkedin.com/in/akshay-sinha-91215954"><i class="fa fa-linkedin-square fa-lg"></i> linkedin</a></li>
+    <li class="list-group-item"><a href="https://github.com/akshaysin"><i class="fa fa-github-square fa-lg"></i> github</a></li>
+  </ul>
+</li>
+<!-- End Sidebar/Social -->
+
+<!-- Sidebar/Links -->
+<li class="list-group-item">
+  <h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+  <ul class="list-group" id="links">
+    <li class="list-group-item">
+      <a href="https://uptowork.com/mycv/akshaysinha" target="_blank">Resume</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://spamty.eu/mail/v4/830/2RWUyWci8Q2f55cff1/" target="_blank">Email</a>
+    </li>
+  </ul>
+</li>
+<!-- End Sidebar/Links -->
+
+<!-- Sidebar/Archive -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Archive</span></h4>
+  <ul class="list-group" id="archive">
+        <li class="list-group-item">
+          <a href="https://akshaysin.github.io/posts/2018/Sep/index.html"><i class="fa fa-calendar fa-lg"></i>September 2018 (1)
+          </a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://akshaysin.github.io/posts/2018/Aug/index.html"><i class="fa fa-calendar fa-lg"></i>August 2018 (5)
+          </a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://akshaysin.github.io/posts/2018/Jul/index.html"><i class="fa fa-calendar fa-lg"></i>July 2018 (2)
+          </a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://akshaysin.github.io/posts/2018/Jun/index.html"><i class="fa fa-calendar fa-lg"></i>June 2018 (4)
+          </a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://akshaysin.github.io/posts/2018/May/index.html"><i class="fa fa-calendar fa-lg"></i>May 2018 (1)
+          </a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://akshaysin.github.io/posts/2018/Apr/index.html"><i class="fa fa-calendar fa-lg"></i>April 2018 (8)
+          </a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://akshaysin.github.io/posts/2018/Mar/index.html"><i class="fa fa-calendar fa-lg"></i>March 2018 (5)
+          </a>
+        </li>
+  </ul>
+</li>
+<!-- End Sidebar/Archive -->
+  </ul>
+</section>
+<!-- End Sidebar -->            </aside>
+        </div>
+    </div>
+</div>
+<!-- End Content Container -->
+
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2018 Akshay Sinha
+            &middot; Powered by <a href="https://github.com/getpelican/pelican-themes/tree/master/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="https://akshaysin.github.io/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://akshaysin.github.io/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="https://akshaysin.github.io/theme/js/respond.min.js"></script>
+
+
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'an-average-joe'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+    <!-- Google Analytics Universal -->
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-118879797-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics Universal Code -->
+
+
+        <script type="text/javascript">var addthis_config = {"data_track_addressbar": true};</script>
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5adbce4fc80f08db"></script>
+    <script>
+           $(document).ready(function () {
+              $("table").attr("class","table table-condensed table-bordered");
+           });
+    </script>
+</body>
+</html>
