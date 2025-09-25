@@ -12,6 +12,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# build artifacts
+artifact.tar
+*.tar
 
 # environment variables
 .env
