@@ -13,151 +13,168 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 			main {
 				max-width: 1200px;
 				margin: 0 auto;
-				padding: 2rem;
+				padding: 4rem 2rem;
 			}
 
 			.hero {
 				text-align: center;
-				margin-bottom: 4rem;
-				padding: 2rem 0;
+				margin-bottom: 6rem;
+				padding: 4rem 0;
+				background: rgba(var(--gray-light), 0.3);
+				border-radius: 16px;
 			}
 
 			.hero h1 {
-				font-size: 2.5rem;
-				margin-bottom: 1rem;
-				color: rgb(var(--gray-dark));
+				font-size: 3.5rem;
+				margin-bottom: 1.5rem;
+				color: rgb(var(--black));
+				font-weight: 700;
 			}
 
 			.hero-description {
-				font-size: 1.2rem;
-				color: rgb(var(--gray));
-				max-width: 600px;
+				font-size: 1.25rem;
+				color: rgb(var(--gray-dark));
+				max-width: 650px;
 				margin: 0 auto;
-				line-height: 1.6;
+				line-height: 1.7;
 			}
 
 			.expertise {
-				margin-bottom: 4rem;
+				margin-bottom: 6rem;
 			}
 
 			.expertise h2 {
 				text-align: center;
-				margin-bottom: 2rem;
-				color: rgb(var(--gray-dark));
+				font-size: 2.5rem;
+				margin-bottom: 3rem;
+				color: rgb(var(--black));
 			}
 
 			.expertise-grid {
 				display: grid;
 				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-				gap: 2rem;
-				margin-bottom: 2rem;
+				gap: 2.5rem;
 			}
 
 			.expertise-item {
-				background: rgb(var(--gray-light));
-				padding: 2rem;
-				border-radius: 8px;
+				background: #fff;
+				padding: 2.5rem;
+				border-radius: 12px;
 				text-align: center;
-				transition: transform 0.2s ease;
+				transition: all 0.3s ease;
+				box-shadow: var(--box-shadow);
+				border: 1px solid rgba(var(--gray-light), 0.7);
 			}
 
 			.expertise-item:hover {
-				transform: translateY(-5px);
+				transform: translateY(-8px);
+				box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 			}
 
 			.expertise-item h3 {
 				margin-bottom: 1rem;
-				color: rgb(var(--accent));
+				color: var(--accent);
+				font-size: 1.5rem;
 			}
 
 			.expertise-item p {
-				color: rgb(var(--gray));
-				line-height: 1.5;
+				color: rgb(var(--gray-dark));
+				line-height: 1.6;
 			}
 
 			.featured-content {
 				text-align: center;
-				margin-bottom: 4rem;
-				padding: 2rem;
-				background: rgb(var(--gray-light));
-				border-radius: 8px;
+				margin-bottom: 6rem;
+				padding: 4rem 2rem;
+				background: #fff;
+				border-radius: 16px;
+				box-shadow: var(--box-shadow);
 			}
 
 			.featured-content h2 {
+				font-size: 2.5rem;
 				margin-bottom: 1rem;
-				color: rgb(var(--gray-dark));
+				color: rgb(var(--black));
 			}
 
 			.featured-content p {
-				color: rgb(var(--gray));
+				color: rgb(var(--gray-dark));
 				max-width: 600px;
-				margin: 0 auto 2rem;
-				line-height: 1.6;
+				margin: 0 auto 2.5rem;
+				line-height: 1.7;
+				font-size: 1.1rem;
 			}
 
 			.content-links {
 				display: flex;
-				gap: 1rem;
+				gap: 1.5rem;
 				justify-content: center;
 				flex-wrap: wrap;
 			}
 
 			.content-link {
 				display: inline-block;
-				padding: 0.75rem 1.5rem;
-				background: rgb(var(--accent));
+				padding: 0.8rem 2rem;
+				background: var(--accent);
 				color: white;
 				text-decoration: none;
-				border-radius: 6px;
-				transition: background-color 0.2s ease;
+				border-radius: 8px;
+				transition: all 0.2s ease;
+				font-weight: 600;
+				box-shadow: 0 4px 6px rgba(0, 123, 255, 0.1);
 			}
 
 			.content-link:hover {
-				background: rgb(var(--accent-dark));
+				background: var(--accent-dark);
+				transform: translateY(-2px);
+				box-shadow: 0 6px 8px rgba(0, 123, 255, 0.15);
 			}
 
 			.cta-section {
 				text-align: center;
-				padding: 3rem 2rem;
-				background: linear-gradient(135deg, rgb(var(--accent)) 0%, rgb(var(--accent-dark)) 100%);
+				padding: 5rem 2rem;
+				background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
 				color: white;
-				border-radius: 12px;
+				border-radius: 16px;
 			}
 
 			.cta-section h2 {
-				margin-bottom: 1rem;
-				font-size: 2rem;
+				margin-bottom: 1.5rem;
+				font-size: 2.8rem;
+				font-weight: 700;
 			}
 
 			.cta-section p {
-				margin-bottom: 2rem;
-				font-size: 1.1rem;
-				opacity: 0.9;
-				max-width: 600px;
+				margin-bottom: 2.5rem;
+				font-size: 1.2rem;
+				opacity: 0.95;
+				max-width: 650px;
 				margin-left: auto;
 				margin-right: auto;
+				line-height: 1.7;
 			}
 
 			.cta-buttons {
 				display: flex;
-				gap: 1rem;
+				gap: 1.5rem;
 				justify-content: center;
 				flex-wrap: wrap;
 			}
 
 			.cta-button {
 				display: inline-block;
-				padding: 1rem 2rem;
+				padding: 1rem 2.5rem;
 				text-decoration: none;
 				border-radius: 8px;
-				font-weight: 600;
+				font-weight: 700;
 				transition: all 0.2s ease;
 				border: 2px solid white;
+				font-size: 1.1rem;
 			}
 
 			.cta-button.primary {
 				background: white;
-				color: rgb(var(--accent));
+				color: var(--accent);
 			}
 
 			.cta-button.primary:hover {
@@ -172,12 +189,12 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 			.cta-button.secondary:hover {
 				background: white;
-				color: rgb(var(--accent));
+				color: var(--accent);
 			}
 
 			@media (max-width: 768px) {
 				.hero h1 {
-					font-size: 2rem;
+					font-size: 2.5rem;
 				}
 
 				.expertise-grid {
@@ -190,7 +207,11 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 				}
 
 				.cta-button {
-					width: 200px;
+					width: 220px;
+				}
+
+				.cta-section h2 {
+					font-size: 2.2rem;
 				}
 			}
 		</style>
@@ -201,7 +222,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 			<section class="hero">
 				<h1>Welcome to Akshay Sinha's DevOps Blog</h1>
 				<p class="hero-description">
-					Exploring the world of DevOps, Cloud Infrastructure, and Automation.
+					Exploring the world of DevOps, Infrastructure and Automation.
 					17+ years of experience in transforming complex tech challenges into streamlined solutions.
 				</p>
 			</section>
@@ -214,12 +235,12 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 						<p>Building automated deployment pipelines for microservices and enterprise applications</p>
 					</div>
 					<div class="expertise-item">
-						<h3>☁️ Cloud Infrastructure</h3>
-						<p>Designing scalable cloud architectures and leading cloud migration initiatives</p>
+						<h3>🔧 Infra Automation</h3>
+						<p>Implementing infrastructure as code (IaC) using tools like Terraform and Ansible</p>
 					</div>
 					<div class="expertise-item">
 						<h3>🔧 DevOps Tools</h3>
-						<p>Mastering Kafka, uDeploy, WebSphere, Docker, Kubernetes, and modern DevOps stack</p>
+						<p>Mastering Python, Airflow, uDeploy, WebSphere, Docker, Kubernetes, and modern DevOps stack</p>
 					</div>
 					<div class="expertise-item">
 						<h3>📊 Data & Analytics</h3>
@@ -241,8 +262,8 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 				<h2>Ready to Optimize Your DevOps?</h2>
 				<p>Let's discuss how we can streamline your infrastructure, automate deployments, and accelerate your DevOps transformation.</p>
 				<div class="cta-buttons">
-					<a href="mailto:akshaysin@gmail.com" class="cta-button primary">📧 Get In Touch</a>
-					<a href="tel:+91-9540071467" class="cta-button secondary">📞 Call Me</a>
+					<a href="https://www.linkedin.com/in/akshay-sinha-91215954/" target="_blank" class="cta-button primary">📧 Get In Touch</a>
+					<a href="mailto:akshaysin@gmail.com" class="cta-button secondary">� Let's Talk</a>
 				</div>
 			</section>
 		</main>
