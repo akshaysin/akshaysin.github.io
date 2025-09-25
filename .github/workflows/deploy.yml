@@ -40,31 +40,3 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # Additional job to push to akshaysin.github.io (mimicking old Travis script)
-  push-to-pages-repo:
-    if: github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout pages repo
-        uses: actions/checkout@v4
-        with:
-          repository: akshaysin/akshaysin.github.io
-          path: pages-repo
-          token: ${{ secrets.GITHUB_TOKEN }}  # Or use a PAT if needed
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-          path: dist
-      - name: Copy dist to pages repo
-        run: |
-          cp -r dist/* pages-repo/
-      - name: Commit and push
-        run: |
-          cd pages-repo
-          git config user.name 'GitHub Actions'
-          git config user.email 'actions@github.com'
-          git add .
-          git commit -m 'Deploy from blog-overhaul' || echo "No changes to commit"
-          git push
