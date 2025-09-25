@@ -143,7 +143,7 @@ I am gonna use my car's image for this experiment :)
 
 Below figure shows all four stages of the process and given after is the python code for the same.
 
-![LPF](../../assets/hpf_fourier.JPG)
+![LPF](../../assets/hpf_fourier.jpg)
 
 As can be seen, application of high pass filter, blocked all the low frequencies in the center and allowed only the high frequencies to pass through. Now since edges are usually made of low frequencies, that's we see in the resultant image. 
 
