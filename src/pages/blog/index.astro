@@ -12,7 +12,8 @@ const posts = (await getCollection(
 	'blog',
 	({ data }) => !data.draft && data.pubDate <= now,
 )).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	// Tie-break on id so posts sharing a date keep a stable order between builds.
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() || a.id.localeCompare(b.id),
 );
 ---
 
