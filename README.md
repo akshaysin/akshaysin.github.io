@@ -1,71 +1,77 @@
-# Blog Overhaul
+# akshaysin.github.io
 
-A modern blog built with Astro for hosting on GitHub Pages.
+Source for [akshaysin.github.io](https://akshaysin.github.io) — Akshay Sinha's
+personal blog on DevOps, infrastructure automation, and machine learning.
 
-```sh
-npm create astro@latest -- --template blog
+Built with [Astro](https://astro.build) and deployed to GitHub Pages.
+
+## Commands
+
+| Command             | Action                                            |
+| :------------------ | :------------------------------------------------ |
+| `npm install`       | Install dependencies                              |
+| `npm run dev`       | Start the dev server at `localhost:4321`          |
+| `npm run build`     | Build the production site to `./dist/`            |
+| `npm run preview`   | Preview the built site locally                    |
+| `npm run check`     | Type-check `.astro` files and frontmatter schemas |
+| `npm run clean`     | Remove `dist/` and the `.astro/` cache            |
+| `npm run analyze`   | Report on bundle and asset sizes in `dist/`       |
+
+## Writing a post
+
+Add a Markdown file to `src/content/blog/`. The filename becomes the URL, so
+`2026-01-15-my-post.md` publishes at `/blog/2026-01-15-my-post/`.
+
+Frontmatter is validated by the schema in [`src/content.config.ts`](src/content.config.ts):
+
+```yaml
+---
+title: "Post title"
+description: "One or two sentences; used for SEO and the RSS feed."
+pubDate: 2026-01-15          # or an ISO timestamp with an offset
+updatedDate: 2026-01-20      # optional
+category: "DevOps"           # optional, rendered as a badge
+tags: kafka, ssl             # optional, comma-separated or a YAML list
+heroImage: "../../assets/my-image.webp"   # optional, relative to the post
+heroImageAlt: "Description of the image." # optional but expected with heroImage
+draft: false                 # true keeps the post out of the build entirely
+---
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Hero images live in `src/assets/` (not `public/`) so Astro can optimise them.
 
-Features:
+### Publishing gate
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+A post is built only when `draft` is falsy **and** `pubDate` is in the past.
+This filter is applied in three places, which must stay in sync:
 
-## 🚀 Project Structure
+- [`src/pages/blog/[...slug].astro`](src/pages/blog/[...slug].astro) — the post pages
+- [`src/pages/blog/index.astro`](src/pages/blog/index.astro) — the post listing
+- [`src/pages/rss.xml.js`](src/pages/rss.xml.js) — the feed
 
-Inside of your Astro project, you'll see the following folders and files:
+Because the filter runs at build time, a future-dated post does not appear until
+the site is rebuilt. The deploy workflow therefore runs on a weekly cron
+(Fridays, 09:00 IST) in addition to pushes, so scheduled posts go live without a
+release-day commit.
 
-```text
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
-```
+> **Note:** hero images of draft posts are still emitted to `dist/_astro/` under
+> hashed filenames, because Astro resolves the whole content collection at build
+> time. The filenames are not discoverable from the site, but do not use a hero
+> image you would not want served at all.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Legacy URLs
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+This site previously ran on Jekyll with flat `/post-name.html` URLs. Those paths
+are mapped to their current locations via the `redirects` block in
+[`astro.config.mjs`](astro.config.mjs), which Astro emits as meta-refresh pages.
+Do not remove them — they are still indexed.
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+## Deployment
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 🚀 Deploying to GitHub Pages
-
-1. Push this repository to GitHub.
-2. Go to the repository settings.
-3. Under "Pages", set the source to "Deploy from a branch" and select the `main` branch and `/dist` folder.
-4. Alternatively, use GitHub Actions for automatic deployment on push.
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) builds on every
+push and pull request to `main`, and deploys to GitHub Pages on pushes to `main`.
+The Pages source must be set to **GitHub Actions** in the repository settings.
 
 ## Credit
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+Theme based on [Bear Blog](https://github.com/HermanMartinus/bearblog/).

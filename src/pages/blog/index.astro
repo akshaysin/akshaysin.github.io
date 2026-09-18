@@ -5,7 +5,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { BLOG_DESCRIPTION, BLOG_TITLE } from '../../consts';
 
 const now = new Date();
 const posts = (await getCollection(
@@ -19,10 +19,18 @@ const posts = (await getCollection(
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={BLOG_TITLE} description={BLOG_DESCRIPTION} />
 		<style>
 			main {
 				width: 960px;
+			}
+			.page-title {
+				font-size: 2.5rem;
+				margin-bottom: 0.25em;
+			}
+			.page-intro {
+				color: rgb(var(--gray));
+				margin-bottom: 2rem;
 			}
 			ul {
 				display: flex;
@@ -96,13 +104,21 @@ const posts = (await getCollection(
 		<Header />
 		<main>
 			<section>
+				<h1 class="page-title">Blog</h1>
+				<p class="page-intro">{BLOG_DESCRIPTION}</p>
 				<ul>
 					{
 						posts.map((post) => (
 							<li>
 								<a href={`/blog/${post.id}/`}>
 									{post.data.heroImage && (
-										<Image width={400} height={200} src={post.data.heroImage} alt={post.data.heroImageAlt ?? ''} />
+										<Image
+											width={400}
+											height={200}
+											src={post.data.heroImage}
+											alt={post.data.heroImageAlt ?? ''}
+											fit="cover"
+										/>
 									)}
 									<h4 class="title">{post.data.title}</h4>
 									<p class="date">

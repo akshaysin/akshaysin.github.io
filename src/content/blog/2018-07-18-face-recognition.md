@@ -12,7 +12,7 @@ heroImage: ../../assets/ml.jpg
 
 **[Github Link]()**
 
-In the [last blog](/blog/2018-06-30-pedestrian-count) we talked about how to use Python's OpenCV module to detect and count the number of pedestrians in an image. Now using basically the same script lets see how to detect and count number of faces in an image. The only thing that changes between these two scripts is the haar_cascade model that we use to predict the object. Earliar we were using the model trained for full body detection. This time we will use the model to predict the facial patterns and when a match is found, tag it.
+In the [last blog](/blog/2018-06-30-pedes/) we talked about how to use Python's OpenCV module to detect and count the number of pedestrians in an image. Now using basically the same script lets see how to detect and count number of faces in an image. The only thing that changes between these two scripts is the haar_cascade model that we use to predict the object. Earliar we were using the model trained for full body detection. This time we will use the model to predict the facial patterns and when a match is found, tag it.
 
 ### Steps
 

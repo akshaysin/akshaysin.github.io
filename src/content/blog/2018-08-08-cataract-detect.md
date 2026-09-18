@@ -27,7 +27,7 @@ With this in mind there were two ways I could have approached this problem,
 I tried both :). This first blog is gonna describe in detail the openCV approach and next blog will go over the Kera's approach. I am also releasing the source code with the hope that someone can take the good work further.
 
 
-[Automated Cataract detection - Part 2 using CNN Models in Keras](https://akshaysin.github.io/cataract_detection_using_keras.html#.W21MYuhKhPY)
+[Automated Cataract detection - Part 2 using CNN Models in Keras](/blog/2018-08-09-cataract-detection-using-keras/)
 
 ### Pre-requisites :
 

@@ -1,5 +1,5 @@
 {
-  "name": "starry-singularity",
+  "name": "akshaysin-blog",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -17,5 +17,11 @@
     "@astrojs/sitemap": "^3.5.1",
     "astro": "^5.13.7",
     "sharp": "^0.34.3"
+  },
+  "description": "Akshay Sinha's personal blog, built with Astro and deployed to GitHub Pages.",
+  "private": true,
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.7.3"
   }
 }

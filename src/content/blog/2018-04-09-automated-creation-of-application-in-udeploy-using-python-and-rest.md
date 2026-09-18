@@ -31,13 +31,13 @@ Now python being my choice of language, I opted it to make REST calls to uDeploy
 
 In order to do anything programmatically with udeploy, we would first need to connect to uDeploy. Please follow the instructions in below link to get started
 
-[Connecting to udeploy via REST and Python](/blog/2018-04-09-connecting-to-udeploy-via-rest-and-python)
+[Connecting to udeploy via REST and Python](/blog/2018-04-18-connecting-to-udeploy-via-rest-and-python/)
 
 #### Create component using REST and Python
 
 Before we create a application, we will need to know, how to create a component. Please refer to following link for details on That
 
-[Create component using REST and Python](/blog/2018-04-09-create-component-using-rest-and-python)
+[Create component using REST and Python](/blog/2018-04-09-automated-creation-of-components-in-udeploy-using-python-and-rest/)
 
 #### Create application using REST and Python
 

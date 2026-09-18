@@ -184,7 +184,7 @@ Here is the Python code
     plt.show()
 
 
-[Part two](https://akshaysin.github.io/fourier_lpf.html#.W5oIp-hKhPY) of this blog will cover the implementation and application of Low pass and Band pass filter. 
+[Part two](/blog/2018-09-13-fourier-lpf/) of this blog will cover the implementation and application of Low pass and Band pass filter. 
 
 
 ### Credits

@@ -14,7 +14,7 @@ This is a short goto guide for any kafka administrators with some of the most us
 
 #### The "bin" directory
 
-I am a big fan of using hdf version of kafka even when kafka is the only thing I am looking for from that suite. The main reason is ambari. Using ambari, the installation and adminstartion of the kafka cluster becomes a breeze. I have written a seperate blog on how to get kafka installed using hdf [here](https://akshaysin.github.io/hdf-kafka.html#.Wxwn9IpKhPY).
+I am a big fan of using hdf version of kafka even when kafka is the only thing I am looking for from that suite. The main reason is ambari. Using ambari, the installation and adminstartion of the kafka cluster becomes a breeze. I have written a seperate blog on how to get kafka installed using hdf [here](/blog/2018-04-11-kafka-hdf/).
 
 So if you did too are runing a hdf instace for kafka, your kafka bin directory would usually be in below listed directory on one of the kafka nodes
 
@@ -62,5 +62,5 @@ then, restart kafka and then
 ### Security
 Kafka ships with an out of box authorizer. What that means is that it gives you the ability to setup acls across topics and restrict them to the users you like. I have found client cert mutual authentication coupled with this acl approach to be very effective. Please refer to folowing two bolgs for more details :
 
-  * [Setting up Client cert mutual authentication in a kafka hdf cluster](/blog/2018-06-09-kafka-ssl)
-  * [Authorization setup in Ambari Kafka based on ACLs](/blog/2018-06-09-kafka-acls)
+  * [Setting up Client cert mutual authentication in a kafka hdf cluster](/blog/2018-06-09-kafka-ssl/)
+  * [Authorization setup in Ambari Kafka based on ACLs](/blog/2018-06-09-kafka-acls/)
