@@ -12,7 +12,7 @@ heroImage: ../../assets/ml.jpg
 This is the continuation of my previous blog where we learned, what is fourier transform and how application of high pass filter on fourier transform of an image can potentially help us with edge detection.
 In case you missed it, please find it here :
 
-[Edge detection in images using Fourier Transform ](https://akshaysin.github.io/fourier_transform.html#.W5njtOhKhPY)
+[Edge detection in images using Fourier Transform ](/blog/2018-08-24-fourier-transform/)
 
 In this post we are gonna learn about two other types of filters and see how can they help us in image analysis :
 
@@ -141,7 +141,7 @@ Here is the python code
 ### Better edge detection in an image using a Band Pass Filter
 
 
-So far we've seen, a High pass filter and a Low Pass filter. We employed HPF for edge detection before. Details of which can be found in my previous post [Edge detection in images using Fourier Transform ](https://akshaysin.github.io/fourier_transform.html#.W5njtOhKhPY).
+So far we've seen, a High pass filter and a Low Pass filter. We employed HPF for edge detection before. Details of which can be found in my previous post [Edge detection in images using Fourier Transform ](/blog/2018-08-24-fourier-transform/).
 
 A Band pass filter is the combination of both HPF and LPF. It strives to achieve a balance in **not throwing away all of the low frequencies as well as all of the high frequencies**. Or in other words, it only allows a range of frequencies to pass. 
 

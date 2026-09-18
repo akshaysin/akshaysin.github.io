@@ -15,6 +15,20 @@ const blog = defineCollection({
 			heroImage: image().optional(),
 			heroImageAlt: z.string().optional(),
 			category: z.string().optional(),
+			// Older posts write tags as a comma-separated string; newer ones can
+			// use a YAML list. Normalise both to string[].
+			tags: z
+				.union([z.string(), z.array(z.string())])
+				.optional()
+				.transform((tags) =>
+					typeof tags === 'string'
+						? tags
+								.split(',')
+								.map((tag) => tag.trim())
+								.filter(Boolean)
+						: tags,
+				),
+			author: z.string().default('Akshay Sinha'),
 			draft: z.boolean().default(false),
 		}),
 });

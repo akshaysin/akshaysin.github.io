@@ -11,7 +11,7 @@ heroImage: ../../assets/ml.jpg
 
 This is part two of the blog series, Automated Cataract Detection. In first part we how how to use OpenCV to train a cascade which can somewhat differentiate between an healthy and an cataract affected eye. For part1, please refer to below link.
 
-[Automated Cataract detection - Part 1 using OpenCV](https://akshaysin.github.io/cataract_detect.html#.W2xDw-hKhPY)
+[Automated Cataract detection - Part 1 using OpenCV](/blog/2018-08-08-cataract-detect/)
 
 In this blog we will try to achieve the same same thing but using Convolution Neural Networks. We will implement these networks via python's keras 2 api. Lets get started !!
 
@@ -19,7 +19,7 @@ In this blog we will try to achieve the same same thing but using Convolution Ne
 
 * [Image Augmenter](https://github.com/mdbloice/Augmentor)
 * Python 3.6
-* CUDA 9.0 and cuDNN : Training a model like this, you would definitely wanna use that high end GPU of yours. Please refer to my [previous blog](https://akshaysin.github.io/installing-cuda.html) for more details on installing CUDA and cuDNN on windows.
+* CUDA 9.0 and cuDNN : Training a model like this, you would definitely wanna use that high end GPU of yours. Please refer to my [previous blog](/blog/2018-08-05-installing-cuda/) for more details on installing CUDA and cuDNN on windows.
 * Keras 2 API with Tensor Flow backend
 
 ### Installing dependencies 
