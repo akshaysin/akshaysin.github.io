@@ -1,30 +1,64 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
+import AboutHeroImage from '../assets/avatar.jpg';
+import { RESUME_URL } from '../consts';
 import Layout from '../layouts/BlogPost.astro';
 ---
 
 <Layout
 	title="About Me"
-	description="About Akshay Sinha - DevOps Engineer with 17+ years of experience"
+	description="About Akshay Sinha - Platform Engineering, DevOps & AI Enablement leader with 18+ years of experience"
 	pubDate={new Date('August 08 2021')}
+	updatedDate={new Date('September 19 2026')}
 	heroImage={AboutHeroImage}
 	heroImageAlt="Portrait of Akshay Sinha"
 	compactHero
 	pageType="website"
 >
 	<p>
-		Hey there! I’m Akshay Sinha, a DevOps enthusiast with 17+ years of experience turning complex tech challenges into smooth, automated solutions. I specialize in cloud transformations, CI/CD pipelines, and infrastructure automation—and I love diving into freelance projects that need a strategic touch.
+		Hey there! I’m Akshay Sinha, a platform engineering, DevOps and AI enablement leader with 18+ years
+		of experience building DevOps, SRE, cloud, automation and secure delivery platforms across financial
+		services, media and enterprise technology. I like building practical platforms, simplifying complex
+		systems, and helping engineering teams do their best work.
+	</p>
+
+	<h2>What I’m working on now</h2>
+	<p>
+		As Vice President of DevOps at Morgan Stanley, I lead DevOps, automation and production engineering
+		for the Equity Swaps platforms in Institutional Securities. Lately that means putting GenAI to work on
+		real engineering problems: an AI engineering assistant built on foundation models and RAG, grounded in
+		Jira, incidents, change tickets and documentation; an AI-driven defect intelligence tool that cut manual
+		defect analysis by around 60%; and developer tooling for data lineage and discovery built on Sourcegraph
+		MCP and GitHub Search.
+	</p>
+	<p>
+		Alongside that, I’ve built DevSecOps platforms on Airflow, Neo4j, GraphQL and Open Policy Agent, plus
+		Kubernetes and OpenShift automation such as OPA-based admission controls and automated Kerberos
+		provisioning.
+	</p>
+
+	<h2>How I got here</h2>
+	<p>
+		I started at Tata Consultancy Services in 2008, automating build, release and deployment for WebSphere,
+		Java and .NET applications across India and the UK. At HCL Technologies I led DevOps for Comcast, NBC
+		Universal and Universal Studios, working between India and the US. At Cognizant I led DevOps and platform
+		teams for PepsiCo and Universal Studios, built a global NGINX-based API platform, and ran CDN operations on
+		Akamai and Cloudflare.
+	</p>
+
+	<h2>On the side</h2>
+	<p>
+		I build things: <a href="/blog/2025-09-25-resume-builder/">SecureCV</a>, an AI-assisted resume builder
+		for concise one-page resumes; HashtagHarvest, an AI-assisted platform that turns trending topics into
+		content ideas; and local-first AI agents that run on open-source models on consumer hardware. I also mentor
+		in the DevOps, platform engineering and cybersecurity communities and run workshops on OPA, platform
+		security and engineering automation.
 	</p>
 
 	<p>
-		Over the years, I’ve led large-scale IT initiatives across India, the UK, and the US, working with tools like Kafka, Cloudant, WebSphere, and more. My proudest moments? Lots!!. From leading the deployment squad for Passport Seva Project to leading DevOps at Universal Studios Orlando; transforming mundane regulatory compliance into automated governance;to introducing modern practices in Fintech !! And More
-	</p>
-
-	<p>
-		I’m also big on writing technical articles and solving problems through smart tech and innovation. Whether it’s building high-availability systems or mentoring teams, I’m all about creating scalable, secure, and user-friendly solutions.
-	</p>
-
-	<p>
-		Looking to optimize your DevOps game or automate your infrastructure setup? Let’s chat! Reach me at <a href="mailto:akshaysin@gmail.com">akshaysin@gmail.com</a> — I’d love to explore how we can collaborate.
+		Want to talk platforms, automation or AI? Reach me at
+		<a href="mailto:akshaysin@gmail.com">akshaysin@gmail.com</a>, connect on
+		<a href="https://www.linkedin.com/in/akshay-sinha-91215954/" target="_blank" rel="noopener noreferrer"
+			>LinkedIn</a
+		>, or <a href={RESUME_URL} download>download my resume (PDF)</a>.
 	</p>
 </Layout>

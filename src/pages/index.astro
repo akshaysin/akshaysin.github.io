@@ -1,8 +1,101 @@
 ---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Avatar from '../assets/avatar.jpg';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Icon, { type IconName } from '../components/Icon.astro';
+import { RESUME_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const now = new Date();
+const posts = (await getCollection(
+	'blog',
+	({ data }) => !data.draft && data.pubDate <= now,
+)).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() || a.id.localeCompare(b.id),
+);
+
+const WORDS_PER_MINUTE = 220;
+const latestPosts = posts.slice(0, 3).map((post) => {
+	const words = (post.body ?? '').split(/\s+/).filter(Boolean).length;
+	return { post, minutes: Math.max(1, Math.round(words / WORDS_PER_MINUTE)) };
+});
+
+const expertise: { icon: IconName; title: string; body: string; stack: string[] }[] = [
+	{
+		icon: 'sparkles',
+		title: 'AI & GenAI',
+		body: 'RAG assistants, defect intelligence and agentic developer tooling built on foundation models.',
+		stack: ['Azure OpenAI', 'RAG', 'Vector search', 'MCP'],
+	},
+	{
+		icon: 'layers',
+		title: 'Platform Engineering',
+		body: 'Kubernetes and OpenShift platforms with policy-driven admission control and automated provisioning.',
+		stack: ['Kubernetes', 'OpenShift', 'AKS / EKS', 'Docker'],
+	},
+	{
+		icon: 'shield',
+		title: 'Cloud & DevSecOps',
+		body: 'Infrastructure and policy as code, with security controls that are validated automatically.',
+		stack: ['Azure', 'AWS', 'Terraform', 'Ansible', 'OPA'],
+	},
+	{
+		icon: 'workflow',
+		title: 'Automation & Data',
+		body: 'Pipelines, orchestration and APIs behind critical, high-volume trading workflows.',
+		stack: ['Python', 'Airflow', 'Jenkins', 'Kafka', 'Neo4j', 'GraphQL'],
+	},
+];
+
+const experience: {
+	company: string;
+	role: string;
+	period: string;
+	place: string;
+	summary: string;
+	highlights?: string[];
+}[] = [
+	{
+		company: 'Morgan Stanley',
+		role: 'Vice President, DevOps',
+		period: '2020 – Present',
+		place: 'India',
+		summary:
+			'Leading DevOps, automation and production engineering for Equity Swaps platforms in Institutional Securities.',
+		highlights: [
+			'Built an AI engineering assistant on foundation models and RAG, grounded in Jira, incidents, change tickets and docs.',
+			'Cut manual defect analysis by ~60% with AI-based correlation of new defects against historical ones.',
+			'Built a data lineage and discovery tool on Sourcegraph MCP and GitHub Search to speed up impact analysis and onboarding.',
+			'Built DevSecOps platforms on Airflow, Neo4j, GraphQL and Open Policy Agent.',
+		],
+	},
+	{
+		company: 'Cognizant',
+		role: 'Senior Manager, DevOps',
+		period: '2018 – 2020',
+		place: 'India',
+		summary:
+			'Led DevOps teams for PepsiCo and Universal Studios. Built a global NGINX API platform and ran CDN operations on Akamai and Cloudflare.',
+	},
+	{
+		company: 'HCL Technologies',
+		role: 'Manager, DevOps',
+		period: '2014 – 2018',
+		place: 'India & US',
+		summary:
+			'Led DevOps for Comcast, NBC Universal and Universal Studios. Automated API publishing, microservice onboarding and large-scale data migration.',
+	},
+	{
+		company: 'Tata Consultancy Services',
+		role: 'IT Analyst, DevOps',
+		period: '2008 – 2014',
+		place: 'India & UK',
+		summary: 'Automated build, release and deployment for WebSphere, Java and .NET applications.',
+	},
+];
 ---
 
 <!doctype html>
@@ -10,260 +103,808 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
+			.backdrop {
+				position: absolute;
+				inset: 0 0 auto 0;
+				height: 960px;
+				overflow: hidden;
+				pointer-events: none;
+				z-index: -1;
+			}
+			.backdrop .grid {
+				position: absolute;
+				inset: 0;
+				background-image:
+					linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+					linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+				background-size: 48px 48px;
+				mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 30%, transparent 100%);
+				-webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 30%, transparent 100%);
+			}
+			.backdrop .blob {
+				position: absolute;
+				width: 560px;
+				height: 560px;
+				border-radius: 50%;
+				filter: blur(90px);
+				opacity: 0.35;
+				animation: drift 22s ease-in-out infinite alternate;
+			}
+			.backdrop .blob.one {
+				top: -120px;
+				left: 8%;
+				background: #1b6fd8;
+			}
+			.backdrop .blob.two {
+				top: 80px;
+				right: 4%;
+				background: #6b3fd6;
+				animation-duration: 28s;
+				animation-direction: alternate-reverse;
+			}
+			@keyframes drift {
+				from {
+					transform: translate(0, 0) scale(1);
+				}
+				to {
+					transform: translate(80px, 60px) scale(1.15);
+				}
+			}
+
 			main {
+				width: auto;
 				max-width: 1200px;
-				margin: 0 auto;
-				padding: 4rem 2rem;
+				padding: 4rem 2rem 5rem;
+				box-sizing: border-box;
+			}
+			section {
+				margin-bottom: 7rem;
 			}
 
-			.hero {
-				text-align: center;
-				margin-bottom: 6rem;
-				padding: 4rem 0;
-				background: rgba(var(--gray-light), 0.3);
-				border-radius: 16px;
-			}
-
-			.hero h1 {
-				font-size: 3.5rem;
-				margin-bottom: 1.5rem;
-				color: rgb(var(--black));
-				font-weight: 700;
-			}
-
-			.hero-description {
-				font-size: 1.25rem;
-				color: rgb(var(--gray-dark));
-				max-width: 650px;
-				margin: 0 auto;
-				line-height: 1.7;
-			}
-
-			.expertise {
-				margin-bottom: 6rem;
-			}
-
-			.expertise h2 {
-				text-align: center;
-				font-size: 2.5rem;
-				margin-bottom: 3rem;
-				color: rgb(var(--black));
-			}
-
-			.expertise-grid {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-				gap: 2.5rem;
-			}
-
-			.expertise-item {
-				background: #fff;
-				padding: 2.5rem;
-				border-radius: 12px;
-				text-align: center;
-				transition: all 0.3s ease;
-				box-shadow: var(--box-shadow);
-				border: 1px solid rgba(var(--gray-light), 0.7);
-			}
-
-			.expertise-item:hover {
-				transform: translateY(-8px);
-				box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-			}
-
-			.expertise-item h3 {
-				margin-bottom: 1rem;
+			.eyebrow {
+				display: inline-block;
+				font-family: var(--font-mono);
+				font-size: 0.8rem;
 				color: var(--accent);
-				font-size: 1.5rem;
+				letter-spacing: 0.04em;
+				margin-bottom: 0.75rem;
+			}
+			.section-head {
+				display: flex;
+				align-items: flex-end;
+				justify-content: space-between;
+				gap: 1rem;
+				flex-wrap: wrap;
+				margin-bottom: 2rem;
+			}
+			.section-head h2 {
+				font-size: 2rem;
+				margin: 0;
+			}
+			.text-link {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4em;
+				font-family: var(--font-mono);
+				font-size: 0.85rem;
+				text-decoration: none;
+				color: rgb(var(--gray));
+				transition: color 0.2s ease;
+			}
+			.text-link:hover {
+				color: var(--accent);
 			}
 
-			.expertise-item p {
+			/* Hero */
+			.hero {
+				display: grid;
+				grid-template-columns: 1.05fr 1fr;
+				gap: 3.5rem;
+				align-items: center;
+				padding-top: 2rem;
+			}
+			.identity {
+				display: flex;
+				align-items: center;
+				gap: 0.9rem;
+				margin-bottom: 1.75rem;
+			}
+			.avatar {
+				flex: none;
+				width: 52px;
+				height: 52px;
+				border-radius: 50%;
+				padding: 2px;
+				background: var(--accent-gradient);
+			}
+			.avatar :global(img) {
+				display: block;
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+				border: 2px solid var(--bg);
+				box-sizing: border-box;
+				object-fit: cover;
+			}
+			.identity-text {
+				line-height: 1.3;
+			}
+			.identity-text strong {
+				display: block;
+				font-size: 1rem;
+			}
+			.identity-text span {
+				font-family: var(--font-mono);
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+			}
+			.hero h1 {
+				font-size: clamp(2.2rem, 4.6vw, 3.5rem);
+				line-height: 1.1;
+				margin-bottom: 1.25rem;
+			}
+			.gradient-text {
+				background: var(--accent-gradient);
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+			}
+			.hero-description {
+				font-size: 1.1rem;
+				color: rgb(var(--gray));
+				max-width: 34rem;
+				margin: 0 0 2rem;
+			}
+			.actions {
+				display: flex;
+				gap: 1rem;
+				flex-wrap: wrap;
+			}
+			.button {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.5em;
+				padding: 0.75rem 1.4rem;
+				border-radius: 10px;
+				font-family: var(--font-mono);
+				font-size: 0.9rem;
+				font-weight: 500;
+				text-decoration: none;
+				transition:
+					transform 0.2s ease,
+					box-shadow 0.2s ease,
+					border-color 0.2s ease,
+					color 0.2s ease;
+			}
+			.button.primary {
+				background: var(--accent-gradient);
+				color: #06101c;
+			}
+			.button.primary:hover {
+				color: #06101c;
+				transform: translateY(-2px);
+				box-shadow: 0 8px 24px -6px var(--accent-glow);
+			}
+			.button.secondary {
+				border: 1px solid var(--border);
+				color: rgb(var(--black));
+				background: rgba(17, 24, 39, 0.6);
+			}
+			.button.secondary:hover {
+				border-color: var(--accent);
+				color: var(--accent);
+			}
+			.stats {
+				display: flex;
+				gap: 2.5rem;
+				margin: 2.5rem 0 0;
+				padding: 0;
+				list-style: none;
+			}
+			.stats strong {
+				display: block;
+				font-family: var(--font-mono);
+				font-size: 1.5rem;
+				line-height: 1.2;
+			}
+			.stats span {
+				display: block;
+				line-height: 1.4;
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+			}
+
+			/* Terminal */
+			.terminal {
+				border: 1px solid var(--border);
+				border-radius: 14px;
+				background: rgba(13, 18, 30, 0.85);
+				backdrop-filter: blur(6px);
+				-webkit-backdrop-filter: blur(6px);
+				box-shadow:
+					0 30px 60px -20px rgba(0, 0, 0, 0.7),
+					0 0 0 1px rgba(61, 214, 255, 0.05);
+				overflow: hidden;
+				font-family: var(--font-mono);
+				font-size: 0.8rem;
+			}
+			.terminal-bar {
+				display: flex;
+				align-items: center;
+				gap: 0.45rem;
+				padding: 0.75rem 1rem;
+				border-bottom: 1px solid var(--border);
+				background: rgba(22, 31, 49, 0.6);
+			}
+			.terminal-bar i {
+				width: 11px;
+				height: 11px;
+				border-radius: 50%;
+				background: #334155;
+			}
+			.terminal-bar i:nth-child(1) {
+				background: #ff5f57;
+			}
+			.terminal-bar i:nth-child(2) {
+				background: #febc2e;
+			}
+			.terminal-bar i:nth-child(3) {
+				background: #28c840;
+			}
+			.terminal-bar span {
+				flex: 1;
+				text-align: center;
+				color: rgb(var(--gray));
+				font-size: 0.75rem;
+				margin-right: 2.6rem;
+			}
+			.terminal-body {
+				margin: 0;
+				padding: 1.25rem 1.4rem 1.5rem;
+				border: none;
+				border-radius: 0;
+				background: none;
+				line-height: 1.8;
+				white-space: pre-wrap;
+				overflow-x: auto;
+			}
+			.terminal-body > span {
+				display: block;
+				opacity: 0;
+				animation: reveal 0.01s forwards;
+				animation-delay: calc(var(--i) * 0.45s + 0.3s);
+			}
+			.prompt {
+				color: var(--accent);
+			}
+			.prompt::before {
+				content: '$ ';
+				color: #7c5cff;
+			}
+			.out {
+				color: rgb(var(--gray));
+			}
+			.ok {
+				color: #4ade80;
+			}
+			.cursor::after {
+				content: '';
+				display: inline-block;
+				width: 0.55em;
+				height: 1.1em;
+				vertical-align: text-bottom;
+				background: var(--accent);
+				animation: blink 1s steps(1) infinite;
+			}
+			@keyframes reveal {
+				to {
+					opacity: 1;
+				}
+			}
+			@keyframes blink {
+				50% {
+					opacity: 0;
+				}
+			}
+
+			/* Bento */
+			.bento {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 1.25rem;
+			}
+			.card {
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				padding: 1.75rem;
+				border-radius: 16px;
+				border: 1px solid var(--border);
+				background: linear-gradient(180deg, var(--surface-raised) 0%, var(--surface) 100%);
+				transition:
+					transform 0.25s ease,
+					border-color 0.25s ease,
+					box-shadow 0.25s ease;
+			}
+			.card:hover {
+				transform: translateY(-4px);
+				border-color: var(--accent);
+				box-shadow:
+					0 0 0 1px var(--accent-glow),
+					0 12px 40px -12px var(--accent-glow);
+			}
+			.card-icon {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				width: 44px;
+				height: 44px;
+				border-radius: 10px;
+				margin-bottom: 1.25rem;
+				color: var(--accent);
+				background: rgba(61, 214, 255, 0.08);
+				border: 1px solid rgba(61, 214, 255, 0.2);
+			}
+			.card h3 {
+				font-size: 1.15rem;
+				margin-bottom: 0.5rem;
+			}
+			.card p {
+				font-size: 0.95rem;
+				color: rgb(var(--gray));
+				margin: 0 0 1.25rem;
+			}
+			.chips {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				margin: auto 0 0;
+				padding: 0;
+				list-style: none;
+			}
+			.chips li {
+				font-family: var(--font-mono);
+				font-size: 0.72rem;
+				padding: 0.2rem 0.6rem;
+				border-radius: 6px;
 				color: rgb(var(--gray-dark));
+				background: rgb(var(--gray-light));
+			}
+
+			/* Experience */
+			.timeline {
+				position: relative;
+				margin: 0;
+				padding: 0 0 0 1.75rem;
+				list-style: none;
+			}
+			.timeline::before {
+				content: '';
+				position: absolute;
+				left: 5px;
+				top: 0.6rem;
+				bottom: 0.6rem;
+				width: 1px;
+				background: linear-gradient(180deg, var(--accent), var(--border) 40%);
+			}
+			.role {
+				position: relative;
+				padding-bottom: 2.25rem;
+			}
+			.role:last-child {
+				padding-bottom: 0;
+			}
+			.role::before {
+				content: '';
+				position: absolute;
+				left: calc(-1.75rem + 1px);
+				top: 0.55rem;
+				width: 9px;
+				height: 9px;
+				border-radius: 50%;
+				background: var(--bg);
+				border: 1px solid rgb(var(--gray));
+			}
+			.role.current::before {
+				background: var(--accent);
+				border-color: var(--accent);
+				box-shadow: 0 0 0 4px rgba(61, 214, 255, 0.15);
+			}
+			.role-head {
+				display: flex;
+				justify-content: space-between;
+				align-items: baseline;
+				gap: 0.25rem 1rem;
+				flex-wrap: wrap;
+				margin-bottom: 0.35rem;
+			}
+			.role h3 {
+				font-size: 1.05rem;
+				margin: 0;
+			}
+			.role h3 span {
+				font-weight: 400;
+				color: rgb(var(--gray));
+			}
+			.role-when {
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				color: rgb(var(--gray));
+			}
+			.role p {
+				font-size: 0.95rem;
+				color: rgb(var(--gray));
+				margin: 0;
+				max-width: 52rem;
+			}
+			.highlights {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 0.75rem;
+				margin: 1.1rem 0 0;
+				padding: 0;
+				list-style: none;
+			}
+			.highlights li {
+				font-size: 0.88rem;
+				line-height: 1.55;
+				padding: 0.9rem 1rem;
+				border-radius: 10px;
+				border: 1px solid var(--border);
+				background: var(--surface);
+				border-left: 2px solid var(--accent);
+			}
+
+			/* Posts */
+			.posts {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 1.25rem;
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
+			.posts li {
+				display: flex;
+			}
+			.post {
+				padding: 0;
+				overflow: hidden;
+				text-decoration: none;
+				color: inherit;
+				width: 100%;
+			}
+			.post:hover {
+				color: inherit;
+			}
+			.thumb {
+				aspect-ratio: 2 / 1;
+				background: rgb(var(--gray-light));
+				border-bottom: 1px solid var(--border);
+			}
+			.thumb :global(img) {
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				border-radius: 0;
+			}
+			.post-body {
+				display: flex;
+				flex-direction: column;
+				flex: 1;
+				padding: 1.4rem 1.5rem 1.5rem;
+			}
+			.post-category {
+				font-family: var(--font-mono);
+				font-size: 0.72rem;
+				color: var(--accent);
+				margin-bottom: 0.5rem;
+			}
+			.post h3 {
+				font-size: 1.05rem;
+				line-height: 1.35;
+				transition: color 0.2s ease;
+			}
+			.post:hover h3 {
+				color: var(--accent);
+			}
+			.post p {
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				line-clamp: 3;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+				font-size: 0.9rem;
 				line-height: 1.6;
 			}
-
-			.featured-content {
-				text-align: center;
-				margin-bottom: 6rem;
-				padding: 4rem 2rem;
-				background: #fff;
-				border-radius: 16px;
-				box-shadow: var(--box-shadow);
-			}
-
-			.featured-content h2 {
-				font-size: 2.5rem;
-				margin-bottom: 1rem;
-				color: rgb(var(--black));
-			}
-
-			.featured-content p {
-				color: rgb(var(--gray-dark));
-				max-width: 600px;
-				margin: 0 auto 2.5rem;
-				line-height: 1.7;
-				font-size: 1.1rem;
-			}
-
-			.content-links {
+			.post-meta {
 				display: flex;
-				gap: 1.5rem;
-				justify-content: center;
-				flex-wrap: wrap;
+				align-items: center;
+				gap: 0.5rem;
+				margin-top: auto;
+				font-family: var(--font-mono);
+				font-size: 0.72rem;
+				color: rgb(var(--gray));
 			}
-
-			.content-link {
-				display: inline-block;
-				padding: 0.8rem 2rem;
-				background: var(--accent);
-				color: white;
-				text-decoration: none;
-				border-radius: 8px;
-				transition: all 0.2s ease;
-				font-weight: 600;
-				box-shadow: 0 4px 6px rgba(0, 123, 255, 0.1);
+			.post-meta .read-time {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.3em;
 			}
-
-			.content-link:hover {
-				background: var(--accent-dark);
-				transform: translateY(-2px);
-				box-shadow: 0 6px 8px rgba(0, 123, 255, 0.15);
-			}
-
-			.cta-section {
-				text-align: center;
-				padding: 5rem 2rem;
-				background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-				color: white;
-				border-radius: 16px;
-			}
-
-			.cta-section h2 {
-				margin-bottom: 1.5rem;
-				font-size: 2.8rem;
-				font-weight: 700;
-			}
-
-			.cta-section p {
-				margin-bottom: 2.5rem;
-				font-size: 1.2rem;
-				opacity: 0.95;
-				max-width: 650px;
+			.post-meta .go {
 				margin-left: auto;
-				margin-right: auto;
-				line-height: 1.7;
+				display: inline-flex;
+				transition: transform 0.2s ease, color 0.2s ease;
+			}
+			.post:hover .go {
+				color: var(--accent);
+				transform: translateX(3px);
 			}
 
-			.cta-buttons {
-				display: flex;
-				gap: 1.5rem;
+			/* CTA */
+			.cta {
+				position: relative;
+				margin-bottom: 0;
+				padding: 4rem 2rem;
+				text-align: center;
+				border-radius: 20px;
+				border: 1px solid var(--border);
+				background:
+					radial-gradient(ellipse 60% 80% at 50% 0%, rgba(61, 214, 255, 0.12), transparent 70%),
+					var(--surface);
+				overflow: hidden;
+			}
+			.cta h2 {
+				font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+				margin-bottom: 1rem;
+			}
+			.cta p {
+				max-width: 36rem;
+				margin: 0 auto 2rem;
+				font-size: 1.05rem;
+				color: rgb(var(--gray));
+			}
+			.cta .actions {
 				justify-content: center;
-				flex-wrap: wrap;
 			}
 
-			.cta-button {
-				display: inline-block;
-				padding: 1rem 2.5rem;
-				text-decoration: none;
-				border-radius: 8px;
-				font-weight: 700;
-				transition: all 0.2s ease;
-				border: 2px solid white;
-				font-size: 1.1rem;
-			}
-
-			.cta-button.primary {
-				background: white;
-				color: var(--accent);
-			}
-
-			.cta-button.primary:hover {
-				background: transparent;
-				color: white;
-			}
-
-			.cta-button.secondary {
-				background: transparent;
-				color: white;
-			}
-
-			.cta-button.secondary:hover {
-				background: white;
-				color: var(--accent);
-			}
-
-			@media (max-width: 768px) {
-				.hero h1 {
-					font-size: 2.5rem;
+			@media (max-width: 960px) {
+				.hero {
+					grid-template-columns: 1fr;
+					gap: 3rem;
 				}
-
-				.expertise-grid {
+				.posts {
+					grid-template-columns: 1fr 1fr;
+				}
+			}
+			@media (max-width: 720px) {
+				main {
+					padding: 2rem 1rem 3rem;
+				}
+				section {
+					margin-bottom: 5rem;
+				}
+				.bento,
+				.posts,
+				.highlights {
 					grid-template-columns: 1fr;
 				}
-
-				.cta-buttons {
-					flex-direction: column;
-					align-items: center;
+				.stats {
+					gap: 1.5rem;
 				}
-
-				.cta-button {
-					width: 220px;
+				.terminal {
+					font-size: 0.72rem;
 				}
-
-				.cta-section h2 {
-					font-size: 2.2rem;
+				.cta {
+					padding: 3rem 1.25rem;
+				}
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.backdrop .blob,
+				.cursor::after {
+					animation: none;
+				}
+				.terminal-body > span {
+					opacity: 1;
+					animation: none;
+				}
+				.card,
+				.button,
+				.post-meta .go {
+					transition: none;
 				}
 			}
 		</style>
 	</head>
 	<body>
+		<div class="backdrop" aria-hidden="true">
+			<div class="blob one"></div>
+			<div class="blob two"></div>
+			<div class="grid"></div>
+		</div>
 		<Header />
 		<main>
 			<section class="hero">
-				<h1>Welcome to Akshay Sinha's DevOps Blog</h1>
-				<p class="hero-description">
-					Exploring the world of DevOps, Infrastructure and Automation.
-					17+ years of experience in transforming complex tech challenges into streamlined solutions.
+				<div>
+					<div class="identity">
+						<div class="avatar">
+							<Image src={Avatar} alt="Akshay Sinha" width={104} height={104} loading="eager" />
+						</div>
+						<div class="identity-text">
+							<strong>Akshay Sinha</strong>
+							<span>Platform Engineering · DevOps · AI</span>
+						</div>
+					</div>
+					<h1>Infrastructure that <span class="gradient-text">ships itself.</span></h1>
+					<p class="hero-description">
+						18+ years building DevOps, SRE, cloud and secure delivery platforms across financial
+						services, media and enterprise tech. Now applying GenAI, RAG and developer tooling to
+						engineering problems at scale.
+					</p>
+					<div class="actions">
+						<a href="/blog" class="button primary">
+							Read the blog <Icon name="arrowRight" size={16} />
+						</a>
+						<a href={RESUME_URL} class="button secondary" download>
+							<Icon name="download" size={16} /> Resume
+						</a>
+						<a
+							href="https://github.com/akshaysin"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="button secondary"
+						>
+							GitHub
+						</a>
+					</div>
+					<ul class="stats">
+						<li><strong>18+</strong><span>years in the field</span></li>
+						<li><strong>3</strong><span>countries: India, UK, US</span></li>
+						<li><strong>~60%</strong><span>less manual defect triage</span></li>
+					</ul>
+				</div>
+
+				<div class="terminal" aria-label="Terminal illustration" role="img">
+					<div class="terminal-bar"><i></i><i></i><i></i><span>akshay@devops: ~</span></div>
+					<pre class="terminal-body"><span class="prompt" style="--i:0">whoami</span><span class="out" style="--i:1">akshay-sinha · platform eng, devops &amp; ai · 18+ yrs</span><span class="prompt" style="--i:2">rag ingest --from jira,incidents,docs</span><span class="ok" style="--i:3">✓ embeddings stored in postgres · assistant online</span><span class="prompt" style="--i:4">kubectl apply -f gatekeeper/constraints/</span><span class="ok" style="--i:5">✓ opa admission policies enforced</span><span class="prompt" style="--i:6">ls ~/stack</span><span class="out" style="--i:7">genai/  kubernetes/  opa/  terraform/  airflow/</span><span class="prompt cursor" style="--i:8"></span></pre>
+				</div>
+			</section>
+
+			<section aria-labelledby="expertise-heading">
+				<div class="section-head">
+					<div>
+						<span class="eyebrow">// what I do</span>
+						<h2 id="expertise-heading">Expertise</h2>
+					</div>
+					<a href="/about" class="text-link">More about me <Icon name="arrowRight" size={14} /></a>
+				</div>
+				<div class="bento">
+					{
+						expertise.map((item) => (
+							<article class="card">
+								<span class="card-icon">
+									<Icon name={item.icon} size={22} />
+								</span>
+								<h3>{item.title}</h3>
+								<p>{item.body}</p>
+								<ul class="chips">
+									{item.stack.map((tool) => (
+										<li>{tool}</li>
+									))}
+								</ul>
+							</article>
+						))
+					}
+				</div>
+			</section>
+
+			<section aria-labelledby="experience-heading">
+				<div class="section-head">
+					<div>
+						<span class="eyebrow">// where I've done it</span>
+						<h2 id="experience-heading">Experience</h2>
+					</div>
+					<a href={RESUME_URL} class="text-link" download>
+						Full resume (PDF) <Icon name="download" size={14} />
+					</a>
+				</div>
+				<ol class="timeline">
+					{
+						experience.map((job) => (
+							<li class:list={['role', { current: job.highlights }]}>
+								<div class="role-head">
+									<h3>
+										{job.company} <span>{job.role}</span>
+									</h3>
+									<span class="role-when">
+										{job.period} · {job.place}
+									</span>
+								</div>
+								<p>{job.summary}</p>
+								{job.highlights && (
+									<ul class="highlights">
+										{job.highlights.map((item) => (
+											<li>{item}</li>
+										))}
+									</ul>
+								)}
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section aria-labelledby="posts-heading">
+				<div class="section-head">
+					<div>
+						<span class="eyebrow">// fresh from the blog</span>
+						<h2 id="posts-heading">Latest insights</h2>
+					</div>
+					<a href="/blog" class="text-link">All posts <Icon name="arrowRight" size={14} /></a>
+				</div>
+				<ul class="posts">
+					{
+						latestPosts.map(({ post, minutes }) => (
+							<li>
+								<a href={`/blog/${post.id}/`} class="card post">
+									<div class="thumb">
+										{post.data.heroImage && (
+											<Image
+												src={post.data.heroImage}
+												alt={post.data.heroImageAlt ?? ''}
+												width={480}
+												height={240}
+												fit="cover"
+											/>
+										)}
+									</div>
+									<div class="post-body">
+										{post.data.category && <span class="post-category">{post.data.category}</span>}
+										<h3>{post.data.title}</h3>
+										<p>{post.data.description}</p>
+										<div class="post-meta">
+											<FormattedDate date={post.data.pubDate} />
+											<span aria-hidden="true">·</span>
+											<span class="read-time">
+												<Icon name="clock" size={13} />
+												{minutes} min read
+											</span>
+											<span class="go">
+												<Icon name="arrowRight" size={16} />
+											</span>
+										</div>
+									</div>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="cta">
+				<span class="eyebrow">// let's build something</span>
+				<h2>Let's talk platforms, automation &amp; AI.</h2>
+				<p>
+					Whether it's a delivery platform that needs rebuilding, security controls that should run
+					themselves, or an AI assistant grounded in your own engineering data, I'd love to hear
+					about it.
 				</p>
-			</section>
-
-			<section class="expertise">
-				<h2>My Expertise</h2>
-				<div class="expertise-grid">
-					<div class="expertise-item">
-						<h3>🚀 CI/CD Pipelines</h3>
-						<p>Building automated deployment pipelines for microservices and enterprise applications</p>
-					</div>
-					<div class="expertise-item">
-						<h3>🔧 Infra Automation</h3>
-						<p>Implementing infrastructure as code (IaC) using tools like Terraform and Ansible</p>
-					</div>
-					<div class="expertise-item">
-						<h3>🔧 DevOps Tools</h3>
-						<p>Mastering Python, Airflow, uDeploy, WebSphere, Docker, Kubernetes, and modern DevOps stack</p>
-					</div>
-					<div class="expertise-item">
-						<h3>📊 Data & Analytics</h3>
-						<p>Implementing machine learning solutions and data processing pipelines</p>
-					</div>
-				</div>
-			</section>
-
-			<section class="featured-content">
-				<h2>Latest Insights</h2>
-				<p>Sharing practical DevOps implementations, automation strategies, and technical deep-dives from real-world projects</p>
-				<div class="content-links">
-					<a href="/blog" class="content-link">📖 Read My Blog Posts</a>
-					<a href="/about" class="content-link">👨‍💻 Learn More About Me</a>
-				</div>
-			</section>
-
-			<section class="cta-section">
-				<h2>Ready to Optimize Your DevOps?</h2>
-				<p>Let's discuss how we can streamline your infrastructure, automate deployments, and accelerate your DevOps transformation.</p>
-				<div class="cta-buttons">
-					<a href="https://www.linkedin.com/in/akshay-sinha-91215954/" target="_blank" rel="noopener noreferrer" class="cta-button primary">📧 Get In Touch</a>
-					<a href="mailto:akshaysin@gmail.com" class="cta-button secondary">💬 Let's Talk</a>
+				<div class="actions">
+					<a
+						href="https://www.linkedin.com/in/akshay-sinha-91215954/"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="button primary"
+					>
+						Connect on LinkedIn <Icon name="arrowRight" size={16} />
+					</a>
+					<a href="mailto:akshaysin@gmail.com" class="button secondary">
+						<Icon name="mail" size={16} /> Email me
+					</a>
+					<a href={RESUME_URL} class="button secondary" download>
+						<Icon name="download" size={16} /> Resume
+					</a>
 				</div>
 			</section>
 		</main>

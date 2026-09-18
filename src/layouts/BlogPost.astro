@@ -111,9 +111,13 @@ const visibleTags = (tags ?? []).filter(
 				background: rgb(var(--gray-light));
 				color: rgb(var(--gray-dark));
 			}
+			.meta span {
+				font-family: var(--font-mono);
+			}
 			.meta .category {
-				background: var(--accent);
-				color: #fff;
+				background: transparent;
+				border: 1px solid var(--accent);
+				color: var(--accent);
 			}
 		</style>
 	</head>

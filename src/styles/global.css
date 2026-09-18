@@ -5,29 +5,47 @@
  */
 
 :root {
-	--accent: #007bff; /* A professional blue */
-	--accent-dark: #0056b3;
-	--black: 17, 24, 39; /* A softer black */
-	--gray: 107, 114, 128;
-	--gray-light: 243, 244, 246;
-	--gray-dark: 55, 65, 81;
-	--gray-gradient: rgba(var(--gray-light), 0.5), #ffffff;
+	color-scheme: dark;
+
+	--bg: #0a0e17;
+	--surface: #111827;
+	--surface-raised: #161f31;
+	--border: #1f2a3d;
+
+	--accent: #3dd6ff;
+	--accent-dark: #16a9d9;
+	--accent-glow: rgba(61, 214, 255, 0.35);
+	--accent-gradient: linear-gradient(135deg, #3dd6ff 0%, #7c5cff 100%);
+
+	/* RGB triplets, named for their role in the original light theme. */
+	--black: 241, 245, 249; /* headings */
+	--gray-dark: 203, 213, 225; /* body text */
+	--gray: 148, 163, 184; /* muted text */
+	--gray-light: 30, 41, 59; /* subtle fills */
+
+	--font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
 	--box-shadow:
-		0 4px 6px -1px rgba(0, 0, 0, 0.1),
-		0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		0 4px 6px -1px rgba(0, 0, 0, 0.4),
+		0 2px 4px -1px rgba(0, 0, 0, 0.3);
 }
 body {
-	font-family: "Inter", sans-serif;
+	font-family: var(--font-sans);
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
-	background-size: 100% 600px;
+	background: var(--bg);
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	color: rgb(var(--gray-dark));
 	font-size: 20px;
 	line-height: 1.7;
+	-webkit-font-smoothing: antialiased;
+}
+::selection {
+	background: var(--accent-glow);
+	color: #fff;
 }
 main {
 	width: 720px;
@@ -43,32 +61,43 @@ h5,
 h6 {
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--black));
+	font-family: var(--font-mono);
+	font-weight: 700;
+	letter-spacing: -0.02em;
 	line-height: 1.2;
 }
+/* Monospace runs wide, so the scale is tighter than the usual 1.25 ratio. */
 h1 {
-	font-size: 3.052em;
+	font-size: 2.2em;
 }
 h2 {
-	font-size: 2.441em;
+	font-size: 1.6em;
+	margin-top: 1.5em;
 }
 h3 {
-	font-size: 1.953em;
+	font-size: 1.3em;
+	margin-top: 1.25em;
 }
 h4 {
-	font-size: 1.563em;
+	font-size: 1.1em;
 }
 h5 {
-	font-size: 1.25em;
+	font-size: 1em;
 }
 strong,
 b {
 	font-weight: 700;
+	color: rgb(var(--black));
 }
 a {
 	color: var(--accent);
 }
 a:hover {
 	color: var(--accent);
+}
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
 }
 p {
 	margin-bottom: 1em;
@@ -85,6 +114,12 @@ input {
 }
 table {
 	width: 100%;
+	border-collapse: collapse;
+}
+th,
+td {
+	border-bottom: 1px solid var(--border);
+	padding: 0.4em 0.6em;
 }
 img {
 	max-width: 100%;
@@ -92,16 +127,22 @@ img {
 	border-radius: 8px;
 }
 code {
-	padding: 2px 5px;
+	font-family: var(--font-mono);
+	font-size: 0.85em;
+	padding: 2px 6px;
 	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
+	color: rgb(var(--black));
+	border-radius: 4px;
 }
 pre {
 	padding: 1.5em;
 	border-radius: 8px;
+	border: 1px solid var(--border);
+	scrollbar-color: #334155 transparent;
 }
 pre > code {
 	all: unset;
+	font-family: var(--font-mono);
 }
 blockquote {
 	border-left: 4px solid var(--accent);
@@ -111,7 +152,7 @@ blockquote {
 }
 hr {
 	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
+	border-top: 1px solid var(--border);
 }
 @media (max-width: 720px) {
 	body {
