@@ -7,7 +7,11 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
+const now = new Date();
+const posts = (await getCollection(
+	'blog',
+	({ data }) => !data.draft && data.pubDate <= now,
+)).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
@@ -98,7 +102,7 @@ const posts = (await getCollection('blog')).sort(
 							<li>
 								<a href={`/blog/${post.id}/`}>
 									{post.data.heroImage && (
-										<Image width={400} height={200} src={post.data.heroImage} alt="" />
+										<Image width={400} height={200} src={post.data.heroImage} alt={post.data.heroImageAlt ?? ''} />
 									)}
 									<h4 class="title">{post.data.title}</h4>
 									<p class="date">

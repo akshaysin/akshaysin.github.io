@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    # Rebuild at 09:00 Asia/Kolkata each Friday so approved future-dated posts
+    # become visible without a release-day commit.
+    - cron: '30 3 * * 5'
 
 jobs:
   build:
@@ -39,4 +43,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
