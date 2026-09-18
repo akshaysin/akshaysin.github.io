@@ -28,13 +28,17 @@ paid to read three years ago, so those are the parts that are here.
 ## The problem, in one paragraph
 
 Most deployed foundation models learn in large training runs and then stop.
-You can fine-tune them, but continuous updates on a stream tend to overwrite
-what the model already knew — catastrophic forgetting, one of the field's
-oldest problems. And conventional end-to-end backpropagation is heavy: errors
-flow backward through the network, intermediate state must be retained or
-recomputed, and adaptation needs training-time machinery. If you want a model
-that adapts on a laptop, on a phone, or on a device that never phones home,
-none of that is convenient.
+You can fine-tune them, but repeatedly teaching them new material can overwrite
+older abilities. Machine-learning researchers call this **catastrophic
+forgetting**. It is a little like revising a document by writing every new
+paragraph over an old one.
+
+The usual way to train a neural network is **backpropagation**. The model makes
+a prediction, measures how wrong it was, and sends that error backward through
+its layers so each connection can be adjusted. It works extremely well, but it
+also needs training-time computation and temporary state. If you want a model
+that adapts on a laptop, a phone, or a device that never phones home, that
+machinery is not always convenient.
 
 So: can something smaller learn continuously, on a bounded memory budget,
 without the heavy machinery? That's the north star. Everything in this series is
@@ -42,21 +46,23 @@ an attempt at some part of it.
 
 ## Two attempts
 
-**Attempt one was forward-only.** No backpropagation at all — only *local*
-learning rules, where updates are driven primarily by activity available at
-the two ends of a connection, sometimes with a local modulatory signal.
-Hebbian learning and its relatives. The appeal is that there's no backward
-pass to run, so continuous learning can be cheaper by construction. Posts 1
-through 6 cover this, from a
+**Attempt one was forward-only.** No error signal travelled backward through
+the whole model. Each connection changed using information available near that
+connection: what arrived, what fired, and sometimes one simple feedback signal.
+These are called *local learning rules*. The appeal is that there is no full
+backward pass to run, so continuous learning can be cheaper by construction.
+Posts 1 through 6 cover this, from a
 learner that worked for reasons that weren't mine, through a model that lost to
 a unigram, through the one mechanism that genuinely passed a sealed test, to two
 mechanism families closing.
 
-**Attempt two put backprop back.** If the constraint "no gradients" isn't
-buying anything, drop it and keep the constraint that actually matters: a hard
-budget on how much state the model may carry. That's bounded continual learning,
-built on Pythia-160M, and it's posts 7 and 8. It produced the most rigorous work
-in the program and also a clean null result.
+**Attempt two put backprop back.** If banning it was not buying anything, I
+could drop that restriction and keep the one that mattered: the learner gets a
+fixed amount of memory, and that allowance cannot quietly grow as more data
+arrives. That is what I mean by **bounded continual learning**. I tested it on a
+small existing language model called Pythia-160M. Posts 7 and 8 cover that work.
+It produced the most rigorous experiments in the program and also a clean null
+result: the effect I was looking for did not show up.
 
 ## Where this actually stands
 
@@ -72,6 +78,29 @@ I'm being precise about that because "my research program failed" is a tidier
 story than the true one, and the true one is that a specific set of mechanisms
 failed while the underlying question is still open. A research record moves;
 a published post doesn't. If you find this later, check the dates.
+
+## A short guide to the experiment language
+
+A few terms recur throughout the series:
+
+- A **baseline** is the simpler approach the proposed system must beat. A
+  **control** removes or replaces one part of the system to find out whether
+  that part caused the result.
+- A **seed** is a repeat of the experiment with a different controlled random
+  starting point. If a result disappears across seeds, it may have been luck.
+- A **gate** is a pass/fail rule written for an experiment. Passing a gate says
+  the measured system met that rule; it does not automatically prove every
+  component was useful.
+- A **readout** or **probe** is a small predictor placed on top of a model's
+  internal features. It asks, “is the information present in a form this
+  predictor can use?”
+- **NLL**, or negative log-likelihood, measures how much probability a language
+  model assigned to the correct next token. Lower is better.
+- A **unigram** model ignores word order and predicts from how often each word
+  appeared. It is simple, but surprisingly hard to beat on some small tests.
+- In a **sealed test**, the final test data is kept untouched until the method
+  and decision rules are fixed. You get one honest look; after that, it is no
+  longer sealed.
 
 ## What's in the eight posts
 
@@ -108,17 +137,19 @@ coverage was read, but its diagnostic was still stark: zero route coverage in
 empty."
 
 **6. My Embeddings Were Fine. My Readout Wasn't. Then That Was Wrong Too.** A
-three-act diagnostic. The failure localizes to the readout, not the features —
-a supervised probe on the same frozen features clears the bar easily. Then a
-follow-up suggests that supervised success was exploiting word co-occurrence
-rather than real structure, which un-localizes it again. Sometimes the diagnostic
-that explains your failure is itself wrong.
+three-act diagnostic. At first the test blamed the small predictor reading the
+features rather than the features themselves: a separately trained probe could
+use the same frozen features successfully. Then a follow-up showed that the
+probe may simply have memorized which words tend to occur together. Sometimes
+the diagnostic that explains your failure is itself wrong.
 
 **7. 192 GPU Cells to Learn My Harness Was Lying.** The pivot to bounded
-continual learning. The first full grid completed every cell and reported that
-its configuration matched what I'd selected. It hadn't — it had silently run the
-wrong number of updates per regime. The repaired rerun then failed its stability
-gate in 18 of 24 groups. Why I kept both runs instead of deleting them.
+continual learning. Here, a “cell” means one combination of method, data
+schedule, memory budget, and random seed. The first full grid completed every
+cell and reported that its configuration matched what I'd selected. It hadn't —
+it had silently run the wrong number of learning updates in each segment. The
+repaired rerun then varied too much across seeds in 18 of 24 comparison groups.
+Why I kept both runs instead of deleting them.
 
 **8. One Learning Rate Fixed the Baseline. Storage Still Came Back Null.** A
 calibration screen found the real culprit: one inherited learning rate. Fixing
@@ -162,9 +193,8 @@ contamination perfectly, forever.
 Reproducibility means your result is stable. It says nothing about whether it's
 true. I had spent years believing those were closer together than they are.
 
-Start with [post 1: **I Chose a Learning Rule Twice. A Random One Would Have
-Done.**](/blog/2026-09-18-learning-rule-that-didnt-matter/), or jump to
-whichever failure sounds most like one of yours.
+Start with [post 1](/blog/2026-09-18-learning-rule-that-didnt-matter/), or jump
+to whichever failure sounds most like one of yours.
 
 ---
 

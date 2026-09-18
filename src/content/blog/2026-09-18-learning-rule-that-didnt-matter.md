@@ -32,32 +32,36 @@ the obvious conclusion.
 
 ## Concept: what a local learning rule is, and why bother
 
-Conventional end-to-end backpropagation computes a loss at the output and
-propagates gradients backward through the layers. That's a global credit-
-assignment operation: an early weight is updated using information derived
-from a later loss. It works extremely well and it's why we have the models we
-have.
+Neural networks are made of layers connected by adjustable numbers called
+weights. Training changes those weights so the network's next answer is less
+wrong.
+
+Conventional end-to-end backpropagation begins at the model's final error and
+works backward through every layer. It answers a difficult question: which
+earlier connections deserve credit or blame for the final mistake? This is
+often called *credit assignment*. Backpropagation works extremely well and is
+why we have the models we have.
 
 It also implies some things about deployment. Training needs a backward pass
 and retains or recomputes intermediate state. Continually updating on a stream
 can also wreck what the model already knew.
 
-A **local** learning rule drops the global part. A weight between two neurons
-updates using only those two neurons' activity and maybe a broadcast scalar. No
-backward pass, no stored graph. The classic is **Hebbian** learning — "fire
-together, wire together": if the input neuron and output neuron are active at the
-same time, strengthen the connection.
+A **local** learning rule avoids that network-wide backward message. A
+connection updates from nearby information: what came in, what came out, and
+sometimes one simple signal sent to the whole layer. The classic is **Hebbian**
+learning — “fire together, wire together.” If two units are repeatedly active
+together, strengthen the connection between them.
 
 The three variants I tested:
 
 - **Pure Hebbian.** Co-activation strengthens the weight. Simple, and prone to
   unbounded growth with no way to unlearn.
-- **Anti-Hebbian / decorrelation.** Add a term that pushes co-active neurons'
-  weight vectors *apart*, so they specialize on different patterns instead of
-  all collapsing onto the most common one. Mine used an Oja-style
-  self-normalizing term plus a lateral repulsion term.
-- **Reward-modulated Hebbian.** Multiply the update by a scalar signal — a
-  "three-factor" rule. Mine gated on a self-generated novelty score.
+- **Anti-Hebbian / decorrelation.** Encourage different units to respond to
+  different patterns instead of all copying the same common response. Mine
+  combined automatic weight normalization with a term that pushed similar
+  units apart.
+- **Reward-modulated Hebbian.** Turn the local update up or down using one
+  feedback value. Mine used the model's own estimate of how novel an input was.
 
 The appeal, if any of these work, is a model that keeps learning after
 deployment on a fixed memory budget. That's the north star for this whole
@@ -68,10 +72,11 @@ program, and posts 7 and 8 are about pursuing it with backprop allowed again.
 Before the learning rules, there was an infrastructure phase, and its narrow
 engineering claims held up.
 
-The rules were: no autograd anywhere in the model code, a single isolated
-backprop file allowed to exist purely as a comparison baseline, deterministic
-config and seeding, checkpoints that round-trip exactly, and instrumentation for
-RAM, updates per second, activation sparsity and weight drift.
+The rules were: the main model could not ask a framework to calculate gradients
+automatically; the backpropagation comparison lived in one isolated file;
+randomness was controlled so runs could be repeated; saving and loading had to
+preserve the model exactly; and the code measured memory use, learning speed,
+how many units fired, and how far the weights moved.
 
 All of it met its exit criteria. Checkpoints round-tripped through `np.savez`.
 Memory stayed flat at about **170 KB** across a multi-thousand-step stream, which
@@ -79,17 +84,18 @@ is the thing you actually need if you're claiming bounded continual learning.
 
 Two findings from that phase are worth stealing if you ever build one of these:
 
-**Hebbian rules need zero-mean inputs.** I fed raw 0/1 binary patterns in and
-the weights drifted toward the average input direction instead of toward
-pattern-specific structure. All familiar-versus-noise separation disappeared.
-Switching to bipolar ±1 inputs fixed it. In hindsight it's obvious — with
-all-positive inputs every update pushes the same way — but it cost real time.
+**Hebbian rules need inputs balanced around zero.** I first represented every
+feature as off or on: `0/1`. Because every active value pointed in the positive
+direction, the updates kept pushing the weights the same way. The learner
+captured the average input instead of what made each pattern distinctive, and
+familiar inputs became indistinguishable from noise. Representing the same
+features as negative or positive, `±1`, fixed it.
 
-**Weight-norm caps interact with input dimensionality.** With a norm cap of
-`1.0` on 64-dimensional bipolar inputs, the dot products were large enough to
-saturate `tanh` for essentially any input, familiar or not. Everything looked
-identical because everything was pinned at the ceiling. Dropping the cap to
-`0.25` restored a measurable separation.
+**A weight limit that looks small can still be too large.** With a weight-length
+cap of `1.0` across 64 input features, the combined signal drove the activation
+function to its ceiling for almost every pattern. Once every response is pinned
+near the same maximum, familiar and unfamiliar inputs look identical. Dropping
+the cap to `0.25` restored a measurable difference.
 
 Neither of these is a research finding. Both are the kind of thing that silently
 produces a null result you then misattribute to your hypothesis.
@@ -98,8 +104,9 @@ produces a null result you then misattribute to your hypothesis.
 
 The first task was familiarity detection. Show the learner 8×8 binary patterns
 repeatedly among random noise, then check whether familiar patterns produce a
-more distinct response than new noise. Not language — just "has the rule
-captured recurring structure at all."
+more distinct response than new noise. Not language — just “has the rule
+captured recurring structure at all?” In the table below, **separation** is the
+familiar score minus the noise score, so larger positive values are better.
 
 I ran all three rules on an identical stream, same seed, same patterns, same
 distribution shift:
@@ -127,8 +134,9 @@ was measuring passed a gate named for retention. Post 2 is full of this genre.
 ## Round two: the validation that reversed the result
 
 To my credit — and this is the moment that makes the rest of the series
-frustrating — I did not trust a single seed. The next phase re-ran the
-comparison across 10 seeds.
+frustrating — I did not trust a single seed. A seed is a controlled random
+starting point; changing it is a way to ask whether the result survives ordinary
+random variation. The next phase re-ran the comparison across 10 seeds.
 
 | Rule | Separation (mean ± SD) | Retained | Learning speed |
 | --- | --- | --- | --- |
@@ -136,10 +144,11 @@ comparison across 10 seeds.
 | Anti-Hebbian | 0.042 ± 0.163 | 90% of seeds | 500 steps |
 
 Averaged over seeds, **pure Hebbian slightly outperforms the rule I had just
-chosen**, and both standard deviations are larger than their means — 2.4 times
-larger for pure Hebbian, 3.9 times for anti-Hebbian. The single-seed result
-didn't reverse because anti-Hebbian is worse. It reversed because on this task,
-at this scale, the measurement is noise.
+chosen**. But the `±` values are standard deviations: they show how widely the
+individual runs varied. Both are larger than the average effect — 2.4 times
+larger for pure Hebbian, 3.9 times for anti-Hebbian. The single-seed result did
+not reverse because anti-Hebbian is worse. It reversed because, on this task and
+at this scale, ordinary run-to-run variation is larger than the apparent win.
 
 The right conclusion was available and I half-took it. I wrote down that the two
 rules were statistically indistinguishable and that the Phase 1 pick "was not a
@@ -152,15 +161,18 @@ That open question was exactly right. It then went unanswered while I kept
 building on top of the rule, and the answer, when it finally arrived, was the
 second one.
 
-The ablations from that same phase were far more conclusive than the rule
-comparison, and they're the part I'd defend today:
+The **ablations** from that same phase were far more conclusive than the rule
+comparison. An ablation removes one part while leaving the rest alone; if
+performance then collapses, that part was doing necessary work. These are the
+results I'd defend today:
 
 - **Normalization is load-bearing.** Disabling it collapsed activation diversity
   from `1.00` to `0.53` and weight drift exploded from `2.75` to `17.97`. What
   keeps this rule usable is the normalization, not the anti-Hebbian term.
-- **Top-k competition is a real trade-off.** With no competition, separation
-  standard deviation blew up to `2.55` and retention fell to `70%`. With maximum
-  competition (`top_k=1`), variance and drift both dropped — and so did
+- **Letting only the strongest units respond is a real trade-off.** With no
+  competition between units, separation standard deviation blew up to `2.55`
+  and retention fell to `70%`. Letting only the single strongest unit respond
+  (`top_k=1`) reduced variation and weight movement — but it also reduced
   separation. No free lunch in either direction.
 - **Decay barely mattered** at this scale.
 
@@ -179,11 +191,12 @@ because `A` is followed by `A` in one position and by `B` in another. You need
 context. Then shift the distribution to `A B`, and re-check the original
 sequence afterward to measure retention.
 
-The architecture was context buffer → hidden layer → next-symbol scores, with
-the anti-Hebbian update gated by surprise, so learning concentrates where the
-prediction is wrong. Plus a fatigue-based homeostasis mechanism and a small
-local output scorer — a single-layer delta rule with no error propagated back
-into the hidden layer, keeping the whole thing forward-only.
+The system kept a short window of recent symbols, transformed that window into
+an internal feature vector, and used a small output layer to predict the next
+symbol. The hidden layer updated more when an input was surprising. A simple
+fatigue mechanism stopped the same units from winning forever. The output layer
+learned from its prediction error, but that error never travelled backward into
+the hidden layer, so the hidden learning remained forward-only.
 
 | Stage | Net accuracy | Frequency baseline |
 | --- | --- | --- |
@@ -191,9 +204,11 @@ into the hidden layer, keeping the whole thing forward-only.
 | After shift (AB) | 99.6% | 99.9% (trivially solvable) |
 | Retention re-check (AAB) | 97.2% | 66.7% |
 
-Six of six decision gates passed. And having learned the ten-seed lesson, I
-re-ran it across 8 seeds — where it held: primary `0.9989`, shifted `0.9960`,
-retention `0.9796`, 8 of 8 all-pass.
+Six of six decision gates passed. A gate is simply a threshold the experiment
+must clear, such as minimum accuracy or retained performance after the data
+changes. And having learned the ten-seed lesson, I re-ran it across 8 seeds —
+where it held: primary `0.9989`, shifted `0.9960`, retention `0.9796`, 8 of 8
+all-pass.
 
 So: multi-seed, beats the frequency baseline by 33 points on a task that
 provably requires context, replicates cleanly. I wrote at the time that this
@@ -217,13 +232,14 @@ unchanged and still learned normally.
 
 The frozen random layer passed all six gates on 7 of 8 seeds.
 
-Two phases of rule selection, a surprise gate, homeostasis, normalization,
-decay, consolidation — and a random projection with none of it nearly matches
-the primary score and still clears the declared gates on 7 of 8 seeds. It is
-weaker on shift and retention, so this isn't a claim of equality. It is enough
-to show that the benchmark never established the learned layer's necessity. A
-single-layer delta rule over a fixed random feature map is enough to fit `A A
-B`, which in retrospect is not a surprising fact about `A A B`.
+Two phases of rule selection, surprise-driven updates, fatigue control, weight
+normalization, decay, and consolidation — yet a frozen random transformation
+with none of those mechanisms nearly matches the primary score and still clears
+the declared gates on 7 of 8 seeds. It is weaker on shift and retention, so this
+is not a claim of equality. It is enough to show that the benchmark never
+established the learned layer's necessity. The small output layer could learn
+to use a fixed random remix of the input. For a pattern as simple as `A A B`,
+that was enough.
 
 A smaller detail in the same audit: the retention re-check was itself a training
 stream, updating both layer and scorer while measuring retention. That's the
