@@ -37,9 +37,9 @@ Once registered, goto the [download](https://developer.nvidia.com/rdp/cudnn-down
  Once the files are downloaded locally, unzip them. Installing cuDNN is pretty straight forward. You just have to copy three files from the unzipped directory to CUDA 9.0 install location. 
  For reference, NVIDIA team has put them in their own directory. So all you have to do is to copy file from :
  
- * `{unzipped dir}/bin/` --> `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin`
- * `{unzipped dir}/include/` --> `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include`
- * `{unzipped dir}/lib/` --> `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\lib`
+ * `{unzipped dir}/bin/` → `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin`
+ * `{unzipped dir}/include/` → `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include`
+ * `{unzipped dir}/lib/` → `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\lib`
 
 That's it.
 

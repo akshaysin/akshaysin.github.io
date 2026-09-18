@@ -8,7 +8,9 @@ export async function GET(context) {
 		'blog',
 		({ data }) => !data.draft && data.pubDate <= now,
 	);
-	posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+	posts.sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() || a.id.localeCompare(b.id),
+	);
 	return rss({
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
