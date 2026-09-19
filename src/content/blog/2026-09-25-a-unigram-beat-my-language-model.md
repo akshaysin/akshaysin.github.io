@@ -1,6 +1,6 @@
 ---
 title: "A Unigram Beat My Language Model"
-pubDate: "2026-09-19"
+pubDate: "2026-09-25"
 description: "A sealed natural-text test showed learned features beat random ones but still lost to word-frequency counting; a later confirmation preserved only a small complementary signal."
 category: "Machine Learning"
 heroImage: "../../assets/a-unigram-beat-my-language-model-hero.webp"
@@ -159,5 +159,5 @@ set out to build, but it was the claim the evidence could actually support.
 
 ---
 
-*Next: [**The One Mechanism Claim That Passed**](/blog/2026-09-19-the-one-mechanism-claim-that-passed/).
+*Next: [**The One Mechanism Claim That Passed**](/blog/2026-09-28-the-one-mechanism-claim-that-passed/).
 The one claim about how my model learned that survived a sealed confirmation.*
