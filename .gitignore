@@ -25,3 +25,6 @@ artifact.tar
 
 # jetbrains setting folder
 .idea/
+
+# Claude tech-blog skill rewrites (not published)
+drafts/
