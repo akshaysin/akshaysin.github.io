@@ -6,9 +6,9 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    # Rebuild at 09:00 Asia/Kolkata each Friday so approved future-dated posts
-    # become visible without a release-day commit.
-    - cron: '30 3 * * 5'
+    # Rebuild at 09:00 Asia/Kolkata each Monday and Friday so approved
+    # future-dated posts become visible without a release-day commit.
+    - cron: '30 3 * * 1,5'
 
 jobs:
   build:

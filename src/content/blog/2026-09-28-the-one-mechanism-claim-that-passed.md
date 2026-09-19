@@ -1,6 +1,6 @@
 ---
 title: "The One Mechanism Claim That Passed"
-pubDate: "2026-09-19"
+pubDate: "2026-09-28"
 description: "A narrowly scoped relation-binding and route-local-retention mechanism survived a sealed confirmation across four distinct graph structures without establishing general language understanding."
 category: "Machine Learning"
 heroImage: "../../assets/the-one-mechanism-claim-that-passed-hero.webp"
@@ -170,5 +170,5 @@ around it.
 
 ---
 
-*Next: [**Zero Events Extracted**](/blog/2026-09-19-zero-events-extracted/).
+*Next: [**Zero Events Extracted**](/blog/2026-10-02-zero-events-extracted/).
 Two pipelines that ran clean and did nothing.*

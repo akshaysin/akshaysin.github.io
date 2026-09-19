@@ -1,11 +1,11 @@
 ---
 title: "My Results Were Real. My Claims Weren't."
-pubDate: "2026-10-02"
+pubDate: "2026-09-21"
 description: "An adversarial audit turned a reported 0.800 compositional-generalization result into 0.150 under genuinely frozen evaluation, and exposed four more ways the evidence had been overstated."
 category: "Machine Learning"
 heroImage: "../../assets/my-results-were-real-my-claims-werent-hero.webp"
 heroImageAlt: "Two experiment dashboards flank a magnifying lens that reveals evaluation data looping back into a neural network; green success plots on the left become orange failure plots on the right."
-draft: true
+draft: false
 ---
 
 *Post 2 of a series on a language-model research program that didn't work.
@@ -335,5 +335,5 @@ frozen, honestly-evaluated, properly-sealed model losing to a unigram.
 
 ---
 
-*Next: [**A Unigram Beat My Language Model**](/blog/2026-09-19-a-unigram-beat-my-language-model/).
+*Next: [**A Unigram Beat My Language Model**](/blog/2026-09-25-a-unigram-beat-my-language-model/).
 What happened when I finally ran a sealed test on real text.*

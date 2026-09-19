@@ -1,6 +1,6 @@
 ---
 title: "Zero Events Extracted"
-pubDate: "2026-09-19"
+pubDate: "2026-10-02"
 description: "Two instrumented language pipelines completed normally while their routing front ends produced no useful events or almost no route coverage."
 category: "Machine Learning"
 heroImage: "../../assets/zero-events-extracted-hero.webp"
