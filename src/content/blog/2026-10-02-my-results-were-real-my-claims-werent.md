@@ -335,4 +335,5 @@ frozen, honestly-evaluated, properly-sealed model losing to a unigram.
 
 ---
 
-*Next: **A Unigram Beat My Language Model**. What happened when I finally ran a sealed test on real text.*
+*Next: [**A Unigram Beat My Language Model**](/blog/2026-09-19-a-unigram-beat-my-language-model/).
+What happened when I finally ran a sealed test on real text.*
