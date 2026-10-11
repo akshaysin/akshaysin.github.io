@@ -45,8 +45,9 @@ experience replay (ER) as the main methods. A few new terms:
 - **Fail-fast** stops an arm as soon as the available results show that it has
   broken a rule, instead of spending compute on the rest of its cells.
 - **Headroom** here means the gap between ER at a fixed memory budget and the
-  unbounded-storage reference with the same compute. If that gap is zero, more
-  memory can't help, and neither can a smarter way of using it.
+  unbounded-storage reference with the same compute. A zero gap leaves no
+  demonstrated benefit from extra storage under this replay rule. A different
+  algorithm could still beat ER.
 - **Forgetting** is how much worse the model gets on a domain between visits.
   **Plasticity** is how well it predicts new text as it arrives in the final
   cycle.
@@ -103,8 +104,9 @@ almost no spread across seeds. That looks like stability, and in a narrow sense
 it is.
 
 But before the run, I'd measured the raw gradient sizes: `245` to `464`.
-Capping them at `1.0` cuts each step by a factor of roughly 250 to 450. The
-clipped arms were stable mostly because they barely moved. Clipping did rescue
+For gradients of those observed sizes, a cap of `1.0` cuts the step by a
+factor of roughly 250 to 450. The clipped arms were stable mostly because they
+barely moved. Clipping did rescue
 `2e-4` from blowing up, but at the lower rates it only cost performance. The
 unclipped lower-rate arms carried the result.
 

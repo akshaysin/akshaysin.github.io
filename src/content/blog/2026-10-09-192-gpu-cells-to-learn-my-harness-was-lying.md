@@ -24,8 +24,8 @@ code, never at the loop that did the training.
 
 I fixed that and ran all 192 cells again. The second run did exactly the
 number of updates it claimed, and it still failed. Results varied too much
-between random seeds in 18 of 24 comparison groups. And every method that
-actually learned ended up worse than simply not learning at all.
+between random seeds in 18 of 24 comparison groups. Every method that learned
+within the declared memory budget ended up worse than simply not learning at all.
 
 This post is about both runs, what each one could and couldn't tell me, and why
 I kept the broken one instead of deleting it.
